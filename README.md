@@ -26,7 +26,7 @@ fault injection. All data is synthetic.
 
 ## Setup
 
-Requires Python 3.11+.
+Requires Python 3.10+.
 
 ```bash
 python -m venv .venv && source .venv/bin/activate

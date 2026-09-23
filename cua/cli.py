@@ -60,12 +60,12 @@ async def _with_console(enabled: bool, coro_fn):
 
 async def cmd_discover(a: argparse.Namespace) -> int:
     from .discovery import DeclaredParam, discover
-    from .llm import AnthropicDecider, ScriptedDecider
+    from .llm import ScriptedDecider, make_decider
 
     tenant = load_tenant(a.tenant)
     profile = load_profile(a.profile)
     policy = load_policy(profile.irreversible_labels)
-    decider = ScriptedDecider(a.scripted) if a.scripted else AnthropicDecider(model=a.model)
+    decider = ScriptedDecider(a.scripted) if a.scripted else make_decider(a.model)
     params = [DeclaredParam.parse(p) for p in a.param]
     if a.chaos:
         set_chaos(a.tenant, json.loads(a.chaos))

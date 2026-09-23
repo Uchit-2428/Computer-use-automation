@@ -26,6 +26,7 @@ _PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[SSN]"),
     (re.compile(r"\b(?:\d[ -]?){13,19}\b"), "[PAN]"),
     (re.compile(r"sk-ant-[A-Za-z0-9_\-]+"), "[API_KEY]"),
+    (re.compile(r"AIza[0-9A-Za-z_\-]{30,}"), "[API_KEY]"),
 ]
 _CURRENCY = re.compile(r"\$\s?[\d,]+\.\d{2}")
 

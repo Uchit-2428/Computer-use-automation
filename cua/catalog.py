@@ -14,7 +14,7 @@ from typing import Any
 import httpx
 
 from .config import CONFIG, list_capabilities, load_policy, load_profile, load_tenant
-from .llm import DEFAULT_MODEL
+from .llm import DEFAULT_GEMINI_MODEL, DEFAULT_MODEL, gemini_generate, gemini_tools, provider
 from .replay import ReplayOptions, replay
 from .schema import Capability, ReplayResult, ReviewStatus, ValueType
 
@@ -72,18 +72,22 @@ def result_for_agent(r: ReplayResult) -> dict[str, Any]:
     return d
 
 
+SYSTEM = ("You are a credit-union service agent. You can only act on back-office systems through the provided capability tools. "
+          "Call a tool when you need data; report business outcomes (e.g. MEMBER_NOT_FOUND) plainly. Answer concisely.")
+
+
 async def ask(question: str, *, model: str | None = None, max_turns: int = 4, log: list[dict[str, Any]] | None = None) -> str:
     """A tiny agent: the model sees only the capability catalog as tools and answers the question."""
+    log = log if log is not None else []
+    if provider() == "gemini":
+        return await _ask_gemini(question, model or DEFAULT_GEMINI_MODEL, max_turns, log)
     key = os.environ["ANTHROPIC_API_KEY"]
     tools = [t for _, t in catalog()]
     messages: list[dict[str, Any]] = [{"role": "user", "content": question}]
-    system = ("You are a credit-union service agent. You can only act on back-office systems through the provided capability tools. "
-              "Call a tool when you need data; report business outcomes (e.g. MEMBER_NOT_FOUND) plainly. Answer concisely.")
-    log = log if log is not None else []
     async with httpx.AsyncClient(timeout=120) as c:
         for _ in range(max_turns):
             r = await c.post("https://api.anthropic.com/v1/messages", headers={"x-api-key": key, "anthropic-version": "2023-06-01"},
-                             json={"model": model or DEFAULT_MODEL, "max_tokens": 800, "system": system, "tools": tools, "messages": messages})
+                             json={"model": model or DEFAULT_MODEL, "max_tokens": 800, "system": SYSTEM, "tools": tools, "messages": messages})
             r.raise_for_status()
             data = r.json()
             messages.append({"role": "assistant", "content": data["content"]})
@@ -98,4 +102,27 @@ async def ask(question: str, *, model: str | None = None, max_turns: int = 4, lo
                 log.append({"tool_call": u["name"], "input": u["input"], "result_status": res.status.value, "evidence": res.evidence_dir})
                 results.append({"type": "tool_result", "tool_use_id": u["id"], "content": json.dumps(payload)})
             messages.append({"role": "user", "content": results})
+    return "(no final answer within turn limit)"
+
+
+async def _ask_gemini(question: str, model: str, max_turns: int, log: list[dict[str, Any]]) -> str:
+    key = os.environ.get("GEMINI_API_KEY") or os.environ["GOOGLE_API_KEY"]
+    tools = gemini_tools([t for _, t in catalog()])
+    contents: list[dict[str, Any]] = [{"role": "user", "parts": [{"text": question}]}]
+    async with httpx.AsyncClient(timeout=120) as c:
+        for _ in range(max_turns):
+            data = await gemini_generate(c, model, key, {"systemInstruction": {"parts": [{"text": SYSTEM}]}, "contents": contents, "tools": tools})
+            content = data["candidates"][0]["content"]
+            contents.append(content)
+            parts = content.get("parts", [])
+            calls = [p["functionCall"] for p in parts if "functionCall" in p]
+            log.append({"assistant": parts})
+            if not calls:
+                return "".join(p.get("text", "") for p in parts)
+            responses = []
+            for fc in calls:
+                res = await invoke(fc["name"], dict(fc.get("args") or {}))
+                log.append({"tool_call": fc["name"], "input": fc.get("args"), "result_status": res.status.value, "evidence": res.evidence_dir})
+                responses.append({"functionResponse": {"name": fc["name"], "response": result_for_agent(res)}})
+            contents.append({"role": "user", "parts": responses})
     return "(no final answer within turn limit)"

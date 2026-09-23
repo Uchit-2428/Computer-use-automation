@@ -4,6 +4,7 @@
 (text + optional screenshot) and tool definitions, and gets back exactly one tool call.
 
 * ``AnthropicDecider`` — Claude via the Messages API (tool use, forced single tool call).
+* ``GeminiDecider``    — Gemini via the Generative Language API (function calling, mode ANY).
 * ``ScriptedDecider``  — replays the decisions of an earlier *real* run from its
   transcript. Used for offline tests / demos without an API key; it is clearly labelled
   as such in evidence and never counts as the required genuine discovery run.
@@ -21,6 +22,56 @@ from typing import Any, Protocol
 import httpx
 
 DEFAULT_MODEL = os.environ.get("CUA_MODEL", "claude-sonnet-4-5")
+DEFAULT_GEMINI_MODEL = os.environ.get("CUA_GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_BASE = os.environ.get("CUA_GEMINI_BASE_URL", "https://generativelanguage.googleapis.com")
+
+
+def provider() -> str:
+    """CUA_PROVIDER=anthropic|gemini, else whichever key is configured (Anthropic first)."""
+    p = os.environ.get("CUA_PROVIDER")
+    if p:
+        return p
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return "anthropic"
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
+        return "gemini"
+    raise RuntimeError("no model key: set ANTHROPIC_API_KEY or GEMINI_API_KEY (needed for discovery only; replay never calls a model)")
+
+
+def make_decider(model: str | None = None) -> "Decider":
+    return GeminiDecider(model) if provider() == "gemini" else AnthropicDecider(model)
+
+
+_GEMINI_SCHEMA_KEYS = {"type", "description", "properties", "required", "enum", "items", "nullable", "format"}
+
+
+def gemini_schema(s: Any) -> Any:
+    """JSON Schema -> the OpenAPI subset Gemini function declarations accept."""
+    if isinstance(s, dict):
+        out = {k: gemini_schema(v) if k in ("properties", "items") else v for k, v in s.items() if k in _GEMINI_SCHEMA_KEYS}
+        if "properties" in out:
+            out["properties"] = {k: gemini_schema(v) for k, v in s["properties"].items()}
+        return out
+    return s
+
+
+def gemini_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [{"functionDeclarations": [{"name": t["name"], "description": t["description"], "parameters": gemini_schema(t["input_schema"])} for t in tools]}]
+
+
+async def gemini_generate(client: httpx.AsyncClient, model: str, key: str, body: dict[str, Any]) -> dict[str, Any]:
+    import asyncio
+
+    for attempt in range(6):
+        r = await client.post(f"{GEMINI_BASE}/v1beta/models/{model}:generateContent", json=body,
+                              headers={"x-goog-api-key": key, "content-type": "application/json"})
+        if r.status_code in (429, 500, 503) and attempt < 5:  # free tier is rate limited: back off
+            await asyncio.sleep(min(60, 5 * (attempt + 1)))
+            continue
+        if r.status_code != 200:
+            raise RuntimeError(f"Gemini API error {r.status_code}: {r.text[:300]}")
+        return r.json()
+    raise RuntimeError("Gemini API: retries exhausted")
 
 
 @dataclass
@@ -78,6 +129,40 @@ class AnthropicDecider:
         if not uses:
             raise RuntimeError("model returned no tool call")
         return ToolCall(uses[0]["name"], uses[0]["input"], "\n".join(texts), data.get("usage", {}), data.get("model", self.model))
+
+
+class GeminiDecider:
+    def __init__(self, model: str | None = None, api_key: str | None = None):
+        self.model = model or DEFAULT_GEMINI_MODEL
+        self.api_key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not self.api_key:
+            raise RuntimeError("GEMINI_API_KEY is not set (needed for discovery only; replay never calls a model)")
+        self.client = httpx.AsyncClient(timeout=120)
+
+    async def decide(self, system: str, text: str, image_jpeg: bytes | None, tools: list[dict[str, Any]]) -> ToolCall:
+        parts: list[dict[str, Any]] = []
+        if image_jpeg:
+            parts.append({"inlineData": {"mimeType": "image/jpeg", "data": base64.b64encode(image_jpeg).decode()}})
+        parts.append({"text": text})
+        body = {
+            "systemInstruction": {"parts": [{"text": system}]},
+            "contents": [{"role": "user", "parts": parts}],
+            "tools": gemini_tools(tools),
+            "toolConfig": {"functionCallingConfig": {"mode": "ANY"}},
+            "generationConfig": {"temperature": 0},
+        }
+        data = await gemini_generate(self.client, self.model, self.api_key, body)
+        cparts = ((data.get("candidates") or [{}])[0].get("content") or {}).get("parts") or []
+        calls = [p["functionCall"] for p in cparts if "functionCall" in p]
+        texts = [p["text"] for p in cparts if "text" in p]
+        if not calls:
+            raise RuntimeError(f"model returned no function call: {str(data)[:300]}")
+        um = data.get("usageMetadata", {})
+        usage = {"input_tokens": um.get("promptTokenCount", 0), "output_tokens": um.get("candidatesTokenCount", 0)}
+        args = dict(calls[0].get("args") or {})
+        if "element" in args and isinstance(args["element"], float):
+            args["element"] = int(args["element"])
+        return ToolCall(calls[0]["name"], args, "\n".join(texts), usage, data.get("modelVersion", self.model))
 
 
 class ScriptedDecider:
