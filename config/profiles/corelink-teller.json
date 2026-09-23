@@ -1,0 +1,72 @@
+{
+  "schema": "cua.app-profile/v1",
+  "id": "corelink-teller",
+  "version": "1.0.0",
+  "product": "corelink-teller",
+  "description": "CoreLink Teller 4.x (legacy frameset back-office). Shared by every tenant running the product: how to sign on, which screens are interstitials, and how the product reports errors and business results.",
+  "auth": {
+    "steps": [
+      {
+        "id": "open_signon",
+        "intent": "Open the operator sign-on screen",
+        "source": "profile",
+        "risk": "read_only",
+        "action": {"type": "navigate", "url": "{{tenant.base_url}}/signon"},
+        "expect": [{"kind": "title_is", "title": "CoreLink - Operator Sign On", "frame": {"name": "_top"}}]
+      },
+      {
+        "id": "enter_operator_id",
+        "intent": "Enter the service operator ID",
+        "source": "profile",
+        "action": {"type": "fill", "value": "{{secrets.operator_id}}", "target": {
+          "description": "Operator ID field", "frame": {"name": "_top"},
+          "strategies": [{"kind": "role_name", "role": "textbox", "name": "Operator ID"}, {"kind": "attribute", "tag": "input", "attrs": {"name": "OPRID"}}]}}
+      },
+      {
+        "id": "enter_password",
+        "intent": "Enter the service operator password",
+        "source": "profile",
+        "action": {"type": "fill", "value": "{{secrets.operator_password}}", "target": {
+          "description": "Password field", "frame": {"name": "_top"},
+          "strategies": [{"kind": "role_name", "role": "textbox", "name": "Password"}, {"kind": "attribute", "tag": "input", "attrs": {"name": "PWD"}}]}}
+      },
+      {
+        "id": "sign_on",
+        "intent": "Submit the sign-on form",
+        "source": "profile",
+        "action": {"type": "click", "target": {
+          "description": "Sign On button", "frame": {"name": "_top"},
+          "strategies": [{"kind": "role_name", "role": "button", "name": "Sign On"}, {"kind": "attribute", "tag": "input", "attrs": {"type": "submit"}}]}},
+        "expect": [{"kind": "url_matches", "pattern": "^{{tenant.base_path}}/main$", "frame": {"name": "_top"}}]
+      }
+    ],
+    "success": [{"kind": "url_matches", "pattern": "^{{tenant.base_path}}/work/", "frame": {"name": "work"}}]
+  },
+  "rules": [
+    {"code": "SESSION_EXPIRED", "kind": "recoverable", "description": "Host session timed out; the sign-on form is rendered inside the work frame.",
+     "when": {"kind": "text_visible", "text": "YOUR SESSION HAS EXPIRED"}, "recovery": {"action": "reauthenticate", "max_attempts": 1}},
+    {"code": "APP_ERROR", "kind": "failure", "description": "Unhandled host error page.",
+     "when": {"kind": "text_visible", "text": "SYSTEM ERROR SYS-\\d+", "regex": true}, "message_regex": "SYSTEM ERROR SYS-\\d+.*?Reference [A-F0-9]+"},
+    {"code": "HOST_BUSY", "kind": "recoverable", "description": "Transient 503 from the host; safe to reload GET screens.",
+     "when": {"kind": "text_visible", "text": "HOST BUSY"}, "recovery": {"action": "reload", "frame": {"name": "work"}, "max_attempts": 2, "wait_ms": 500}},
+    {"code": "SYSTEM_NOTICE", "kind": "recoverable", "description": "Informational interstitial (end-of-day notice) that must be acknowledged.",
+     "when": {"kind": "text_visible", "text": "SYSTEM NOTICE"},
+     "recovery": {"action": "click", "max_attempts": 2, "target": {"description": "Acknowledge button", "frame": {"name": "work"},
+       "strategies": [{"kind": "role_name", "role": "button", "name": "Acknowledge"}]}}},
+    {"code": "SUPERVISOR_OVERRIDE_REQUIRED", "kind": "escalate", "description": "Flagged record: a supervisor must enter an override code. Automation must never hold or type supervisor codes.",
+     "when": {"kind": "text_visible", "text": "SUPERVISOR OVERRIDE REQUIRED"}},
+    {"code": "INVALID_CREDENTIALS", "kind": "failure", "description": "Service operator credentials rejected.",
+     "when": {"kind": "text_visible", "text": "INVALID OPERATOR ID OR PASSWORD"}},
+    {"code": "MEMBER_NOT_FOUND", "kind": "business", "description": "No member exists with the given number.",
+     "when": {"kind": "text_visible", "text": "NO MEMBER FOUND FOR NUMBER \\d+", "regex": true}, "message_regex": "NO MEMBER FOUND FOR NUMBER \\d+"},
+    {"code": "PERMISSION_DENIED", "kind": "business", "description": "The service operator is not entitled to this record.",
+     "when": {"kind": "text_visible", "text": "ACCESS DENIED"}, "message_regex": "ACCESS DENIED[^)]*\\)?"},
+    {"code": "OVERRIDE_REJECTED", "kind": "business", "description": "Supervisor override was rejected.",
+     "when": {"kind": "text_visible", "text": "OVERRIDE REJECTED"}},
+    {"code": "VALIDATION_ERROR", "kind": "business", "description": "The host rejected an input value.",
+     "when": {"kind": "text_visible", "text": "INVALID MEMBER NUMBER|MUST BE A DOLLAR AMOUNT|IS REQUIRED", "regex": true},
+     "message_regex": "(INVALID MEMBER NUMBER[^\\n]*?DIGITS|INITIAL DEPOSIT MUST BE A DOLLAR AMOUNT[^)]*\\)|[A-Z]{2,}(?: [A-Z]{2,}){0,3} IS REQUIRED)"}
+  ],
+  "irreversible_labels": ["Confirm", "Approve Override"],
+  "pii_patterns": ["\\b[A-Z][A-Z'\\-]+, [A-Z][A-Z'\\-]+(?: [A-Z]\\b)?"]
+}

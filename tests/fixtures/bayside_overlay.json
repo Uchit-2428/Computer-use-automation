@@ -1,0 +1,14 @@
+{
+  "schema": "cua.tenant-overlay/v1",
+  "id": "test-bayside-balance",
+  "tenant": "bayside",
+  "capability": "member.get_savings_balance",
+  "capability_versions": "1.x",
+  "reason": "Bayside relabels the search button and the balance column.",
+  "target_overrides": {
+    "click_inquire": {"description": "Search button", "frame": {"name": "work"},
+      "strategies": [{"kind": "role_name", "role": "button", "name": "Search"}]},
+    "read_savings_balance": {"description": "Primary savings current balance", "frame": {"name": "work"},
+      "strategies": [{"kind": "table_cell", "column": "Current Bal", "row_key": "PRIMARY SAVINGS"}]}
+  }
+}

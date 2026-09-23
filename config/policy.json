@@ -1,0 +1,9 @@
+{
+  "allowed_origins": ["http://127.0.0.1:8600", "http://localhost:8600"],
+  "allowed_path_prefixes": ["/t/acme/", "/t/bayside/"],
+  "allowed_actions": ["click", "fill", "select", "press", "navigate", "extract", "wait_for"],
+  "irreversible_mode": "require_confirmation",
+  "discovery_irreversible": "block",
+  "require_approved_for_replay": true,
+  "persist_currency_in_evidence": false
+}

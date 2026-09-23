@@ -1,0 +1,10 @@
+{
+  "id": "bayside",
+  "display_name": "Bayside Community Credit Union",
+  "base_url": "http://127.0.0.1:8600/t/bayside",
+  "product": "corelink-teller",
+  "app_version": "4.3.0",
+  "secrets": {"operator_id": "env:CORELINK_OPERATOR_ID", "operator_password": "env:CORELINK_OPERATOR_PASSWORD"},
+  "overlays": [],
+  "data_classification": "synthetic"
+}

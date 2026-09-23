@@ -1,0 +1,376 @@
+{
+  "schema": "cua.capability/v1",
+  "id": "member.get_savings_balance",
+  "version": "1.0.0",
+  "title": "Get member savings balance",
+  "description": "Looks up a member and returns the primary savings balance.",
+  "app": {
+    "product": "corelink-teller",
+    "profile": "corelink-teller@1",
+    "product_versions": ">=4.2 <5",
+    "surface": "legacy_web"
+  },
+  "entry": {
+    "url": "{{tenant.base_url}}/main",
+    "requires_session": true
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "integer",
+      "description": "member id",
+      "required": true,
+      "pattern": "\\d{1,10}",
+      "sensitivity": "pii"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "savings_balance",
+      "type": "currency",
+      "description": "Current balance of the primary savings share",
+      "sensitivity": "financial",
+      "pattern": "-?\\d+\\.\\d{2}"
+    }
+  ],
+  "steps": [
+    {
+      "id": "click_member_inquiry",
+      "intent": "Open Member Inquiry",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "Member Inquiry link",
+          "frame": {
+            "name": "nav"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry"
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/a[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 14.0,
+            "y": 42.0,
+            "w": 105.0,
+            "h": 17.0
+          }
+        }
+      },
+      "risk": "reversible",
+      "expect": [
+        {
+          "kind": "url_matches",
+          "pattern": "^{{tenant.base_path}}/work/inquiry(\\?.*)?$",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "title_is",
+          "title": "CoreLink - Member Inquiry",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "Member Inquiry",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        }
+      ],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "enter_member",
+      "intent": "Enter the member number",
+      "action": {
+        "type": "fill",
+        "target": {
+          "description": "Member # field",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Member #"
+            },
+            {
+              "kind": "attribute",
+              "tag": "input",
+              "attrs": {
+                "name": "P_MBR"
+              }
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "attribute",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 91.0,
+            "y": 36.0,
+            "w": 105.0,
+            "h": 21.0
+          }
+        },
+        "value": "{{inputs.member_id}}"
+      },
+      "risk": "reversible",
+      "expect": [],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "click_inquire",
+      "intent": "Search for the member",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "Inquire button",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Inquire"
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 204.0,
+            "y": 36.0,
+            "w": 57.0,
+            "h": 21.0
+          }
+        }
+      },
+      "risk": "reversible",
+      "expect": [
+        {
+          "kind": "title_is",
+          "title": "CoreLink - Member Search Results",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "Member Search Results",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        }
+      ],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "click_view",
+      "intent": "Open the member detail",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "View link",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "table_cell",
+              "column": "",
+              "row_key": "{{inputs.member_id}}",
+              "interactive": true
+            },
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "View"
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[5]/a[1]"
+            }
+          ],
+          "validated": [
+            "table_cell",
+            "role_name",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 332.0,
+            "y": 62.0,
+            "w": 34.0,
+            "h": 17.0
+          }
+        }
+      },
+      "risk": "reversible",
+      "expect": [
+        {
+          "kind": "url_matches",
+          "pattern": "^{{tenant.base_path}}/work/member/{{inputs.member_id}}(\\?.*)?$",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "title_is",
+          "title": "CoreLink - Member Detail",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "Member Detail",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "Share Accounts",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        }
+      ],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "read_savings_balance",
+      "intent": "Read the primary savings balance",
+      "action": {
+        "type": "extract",
+        "target": {
+          "description": "value cell for savings_balance (column 'Balance')",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row_key": "PRIMARY SAVINGS",
+              "interactive": false
+            },
+            {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row_key": "00",
+              "interactive": false
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/table[2]/tbody[1]/tr[2]/td[4]"
+            }
+          ],
+          "validated": [
+            "table_cell",
+            "table_cell",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 376.0,
+            "y": 144.0,
+            "w": 88.0,
+            "h": 26.0
+          }
+        },
+        "output": "savings_balance"
+      },
+      "risk": "read_only",
+      "expect": [],
+      "timeout_ms": 10000,
+      "source": "agent"
+    }
+  ],
+  "checkpoint": {
+    "description": "Reached the target screen: Member Detail",
+    "all_of": [
+      {
+        "kind": "url_matches",
+        "pattern": "^{{tenant.base_path}}/work/member/{{inputs.member_id}}(\\?.*)?$",
+        "frame": {
+          "name": "work"
+        }
+      },
+      {
+        "kind": "title_is",
+        "title": "CoreLink - Member Detail",
+        "frame": {
+          "name": "work"
+        }
+      },
+      {
+        "kind": "text_visible",
+        "text": "Member Detail",
+        "regex": false
+      }
+    ],
+    "require_outputs": true
+  },
+  "outcomes": [],
+  "declared_outcomes": [
+    "MEMBER_NOT_FOUND",
+    "PERMISSION_DENIED",
+    "OVERRIDE_REJECTED",
+    "VALIDATION_ERROR"
+  ],
+  "max_risk": "reversible",
+  "provenance": {
+    "method": "llm_discovery",
+    "recorded_at": "2026-09-23T00:14:57+00:00",
+    "model": "rule-based-test-double",
+    "discovery_run_id": "discovery-20260922-201450-ee09",
+    "goal": "Look up member {{member_id}} and read their primary savings balance",
+    "tenant": "acme",
+    "app_version": "4.2.1",
+    "human_steps": 0
+  },
+  "review": {
+    "status": "approved",
+    "reviewed_by": "test-fixture",
+    "notes": "recorded by the discovery pipeline with the rule-based test double"
+  }
+}
