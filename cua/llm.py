@@ -22,7 +22,7 @@ from typing import Any, Protocol
 import httpx
 
 DEFAULT_MODEL = os.environ.get("CUA_MODEL", "claude-sonnet-4-5")
-DEFAULT_GEMINI_MODEL = os.environ.get("CUA_GEMINI_MODEL", "gemini-2.5-flash")
+DEFAULT_GEMINI_MODEL = os.environ.get("CUA_GEMINI_MODEL", "gemini-3.6-flash")
 GEMINI_BASE = os.environ.get("CUA_GEMINI_BASE_URL", "https://generativelanguage.googleapis.com")
 
 
@@ -59,18 +59,50 @@ def gemini_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [{"functionDeclarations": [{"name": t["name"], "description": t["description"], "parameters": gemini_schema(t["input_schema"])} for t in tools]}]
 
 
+_RESOLVED_GEMINI: dict[str, str] = {}
+
+
+async def _latest_flash(client: httpx.AsyncClient, key: str) -> str | None:
+    """Pick the newest 'flash' model that supports generateContent (models get retired)."""
+    r = await client.get(f"{GEMINI_BASE}/v1beta/models", params={"pageSize": 200}, headers={"x-goog-api-key": key})
+    if r.status_code != 200:
+        return None
+    names = [m["name"].split("/", 1)[1] for m in r.json().get("models", [])
+             if "generateContent" in m.get("supportedGenerationMethods", []) and "flash" in m["name"]
+             and not any(x in m["name"] for x in ("lite", "image", "tts", "audio", "live", "exp", "preview"))]
+
+    def ver(n: str) -> tuple:
+        import re as _re
+
+        return tuple(int(x) for x in _re.findall(r"\d+", n)[:2])
+
+    return max(names, key=ver) if names else None
+
+
 async def gemini_generate(client: httpx.AsyncClient, model: str, key: str, body: dict[str, Any]) -> dict[str, Any]:
     import asyncio
+    import re as _re
 
+    model = _RESOLVED_GEMINI.get(model, model)
     for attempt in range(6):
         r = await client.post(f"{GEMINI_BASE}/v1beta/models/{model}:generateContent", json=body,
                               headers={"x-goog-api-key": key, "content-type": "application/json"})
+        if r.status_code == 404 and attempt == 0:
+            # model retired / unavailable: use the replacement the API names, else the newest flash model
+            m = _re.search(r"models/([a-z0-9.\-]+) for", r.text)
+            alt = m.group(1) if m else await _latest_flash(client, key)
+            if alt and alt != model:
+                _RESOLVED_GEMINI[model] = alt
+                model = alt
+                continue
         if r.status_code in (429, 500, 503) and attempt < 5:  # free tier is rate limited: back off
             await asyncio.sleep(min(60, 5 * (attempt + 1)))
             continue
         if r.status_code != 200:
             raise RuntimeError(f"Gemini API error {r.status_code}: {r.text[:300]}")
-        return r.json()
+        data = r.json()
+        data.setdefault("modelVersion", model)
+        return data
     raise RuntimeError("Gemini API: retries exhausted")
 
 
@@ -149,7 +181,6 @@ class GeminiDecider:
             "contents": [{"role": "user", "parts": parts}],
             "tools": gemini_tools(tools),
             "toolConfig": {"functionCallingConfig": {"mode": "ANY"}},
-            "generationConfig": {"temperature": 0},
         }
         data = await gemini_generate(self.client, self.model, self.api_key, body)
         cparts = ((data.get("candidates") or [{}])[0].get("content") or {}).get("parts") or []
