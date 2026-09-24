@@ -32,15 +32,15 @@ Requires Python 3.10+.
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m playwright install chromium
-cp .env.example .env            # add ANTHROPIC_API_KEY (only needed for `discover` and `ask`)
+cp .env.example .env            # add ANTHROPIC_API_KEY or GEMINI_API_KEY (only needed for `discover` and `ask`)
 ```
 
 `.env` keys:
 
 | key | needed for | notes |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | `discover`, `ask` | Replay never calls a model |
-| `CUA_MODEL` | optional | Model id used for discovery (default `claude-sonnet-4-5`) |
+| `ANTHROPIC_API_KEY` **or** `GEMINI_API_KEY` | `discover`, `ask` | Replay never calls a model. With both set, `CUA_PROVIDER=anthropic\|gemini` picks one |
+| `CUA_MODEL` / `CUA_GEMINI_MODEL` | optional | Model ids (defaults `claude-sonnet-4-5` / `gemini-3.6-flash`; a retired or overloaded Gemini model fails over to another Flash model automatically) |
 | `CORELINK_OPERATOR_ID` / `CORELINK_OPERATOR_PASSWORD` | everything | Demo creds for the mock app (`teller01` / `demo-pass-123`). Resolved at action time via `env:` secret refs, never written anywhere |
 | `CUA_EVIDENCE_KEY` | optional | HMAC key for fingerprints of financial values in evidence |
 
@@ -52,7 +52,7 @@ python -m mockapp.server        # http://127.0.0.1:8600/
 
 ## Demo path
 
-**1. Discovery: a real LLM drives the live app and records a capability** (≈10 model calls, a few cents):
+**1. Discovery: a real LLM drives the live app and records a capability** (6 model calls in the evidence run; free-tier Gemini is enough). `bash scripts/discover_all.sh` does setup + both evidence discovery runs in one go.
 
 ```bash
 python -m cua discover --tenant acme \
@@ -76,7 +76,7 @@ python -m cua approve member.get_savings_balance --by "your-name" --notes "revie
 
 ```bash
 python -m cua replay member.get_savings_balance --input member_id=100871
-# -> {"status": "succeeded", "outputs": {"savings_balance": "3215.00"}, ...}
+# -> {"status": "succeeded", "outputs": {"primary_savings_balance": "3215.00"}, ...}
 ```
 
 **4. Runtime conditions** (`--chaos` is a test-harness hook on the mock app, not part of the engine):

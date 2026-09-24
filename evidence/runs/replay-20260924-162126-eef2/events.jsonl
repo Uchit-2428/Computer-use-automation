@@ -1,0 +1,31 @@
+{"seq": 1, "ts": "2026-09-24T20:21:26+00:00", "t_ms": 0, "type": "run_start", "capability": "share.open_account_to_review@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20220871", "share_type": "VACATION CLUB", "initial_deposit": "50.00"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:21:27+00:00", "t_ms": 497, "type": "session", "session": "sess-f138ad4d"}
+{"seq": 3, "ts": "2026-09-24T20:21:27+00:00", "t_ms": 498, "type": "step_start", "step": "open_signon", "index": 0, "intent": "Open the operator sign-on screen", "action": "navigate"}
+{"seq": 4, "ts": "2026-09-24T20:21:27+00:00", "t_ms": 905, "type": "step_ok", "step": "open_signon", "strategy": null, "agreeing": null, "ms": 407}
+{"seq": 5, "ts": "2026-09-24T20:21:27+00:00", "t_ms": 969, "type": "step_start", "step": "enter_operator_id", "index": 1, "intent": "Enter the service operator ID", "action": "fill"}
+{"seq": 6, "ts": "2026-09-24T20:21:27+00:00", "t_ms": 1039, "type": "policy", "step": "enter_operator_id", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 7, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1418, "type": "step_ok", "step": "enter_operator_id", "strategy": "role_name", "agreeing": 1, "ms": 448}
+{"seq": 8, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1466, "type": "step_start", "step": "enter_password", "index": 2, "intent": "Enter the service operator password", "action": "fill"}
+{"seq": 9, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1508, "type": "policy", "step": "enter_password", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 10, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1876, "type": "step_ok", "step": "enter_password", "strategy": "role_name", "agreeing": 1, "ms": 410}
+{"seq": 11, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1940, "type": "step_start", "step": "sign_on", "index": 3, "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-24T20:21:28+00:00", "t_ms": 1993, "type": "policy", "step": "sign_on", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 13, "ts": "2026-09-24T20:21:29+00:00", "t_ms": 2675, "type": "step_ok", "step": "sign_on", "strategy": "role_name", "agreeing": 1, "ms": 734}
+{"seq": 14, "ts": "2026-09-24T20:21:29+00:00", "t_ms": 2745, "type": "authenticated", "tenant": "acme"}
+{"seq": 15, "ts": "2026-09-24T20:21:30+00:00", "t_ms": 3324, "type": "step_start", "step": "click_new_share_account", "index": 0, "intent": "Open New Share Account form", "action": "click"}
+{"seq": 16, "ts": "2026-09-24T20:21:30+00:00", "t_ms": 3454, "type": "policy", "step": "click_new_share_account", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 17, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 4179, "type": "step_ok", "step": "click_new_share_account", "strategy": "role_name", "agreeing": 1, "ms": 855}
+{"seq": 18, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 4270, "type": "step_start", "step": "enter_member", "index": 1, "intent": "Enter Member Number", "action": "fill"}
+{"seq": 19, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 4413, "type": "policy", "step": "enter_member", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 20, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 4906, "type": "step_ok", "step": "enter_member", "strategy": "role_name", "agreeing": 2, "ms": 635}
+{"seq": 21, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 4986, "type": "step_start", "step": "select_share_type", "index": 2, "intent": "Select share type", "action": "select"}
+{"seq": 22, "ts": "2026-09-24T20:21:31+00:00", "t_ms": 5120, "type": "policy", "step": "select_share_type", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 23, "ts": "2026-09-24T20:21:32+00:00", "t_ms": 5605, "type": "step_ok", "step": "select_share_type", "strategy": "role_name", "agreeing": 2, "ms": 619}
+{"seq": 24, "ts": "2026-09-24T20:21:32+00:00", "t_ms": 5680, "type": "step_start", "step": "enter_initial_deposit", "index": 3, "intent": "Enter initial deposit amount", "action": "fill"}
+{"seq": 25, "ts": "2026-09-24T20:21:32+00:00", "t_ms": 5824, "type": "policy", "step": "enter_initial_deposit", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 26, "ts": "2026-09-24T20:21:33+00:00", "t_ms": 6325, "type": "step_ok", "step": "enter_initial_deposit", "strategy": "role_name", "agreeing": 2, "ms": 644}
+{"seq": 27, "ts": "2026-09-24T20:21:33+00:00", "t_ms": 6397, "type": "step_start", "step": "click_continue", "index": 4, "intent": "Click Continue to proceed to review screen", "action": "click"}
+{"seq": 28, "ts": "2026-09-24T20:21:33+00:00", "t_ms": 6509, "type": "policy", "step": "click_continue", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 29, "ts": "2026-09-24T20:21:33+00:00", "t_ms": 7020, "type": "step_ok", "step": "click_continue", "strategy": "role_name", "agreeing": 1, "ms": 622}
+{"seq": 30, "ts": "2026-09-24T20:21:33+00:00", "t_ms": 7115, "type": "checkpoint_ok", "description": "Reached the target screen: Review New Share Account"}
+{"seq": 31, "ts": "2026-09-24T20:21:34+00:00", "t_ms": 7282, "type": "run_end", "status": "succeeded", "outcome": null, "error": null}

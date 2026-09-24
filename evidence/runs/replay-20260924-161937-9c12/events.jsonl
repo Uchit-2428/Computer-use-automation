@@ -1,0 +1,32 @@
+{"seq": 1, "ts": "2026-09-24T20:19:37+00:00", "t_ms": 0, "type": "run_start", "capability": "member.get_savings_balance@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20220234"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:19:38+00:00", "t_ms": 478, "type": "session", "session": "sess-ccc42280"}
+{"seq": 3, "ts": "2026-09-24T20:19:38+00:00", "t_ms": 478, "type": "step_start", "step": "open_signon", "index": 0, "intent": "Open the operator sign-on screen", "action": "navigate"}
+{"seq": 4, "ts": "2026-09-24T20:19:38+00:00", "t_ms": 904, "type": "step_ok", "step": "open_signon", "strategy": null, "agreeing": null, "ms": 425}
+{"seq": 5, "ts": "2026-09-24T20:19:38+00:00", "t_ms": 967, "type": "step_start", "step": "enter_operator_id", "index": 1, "intent": "Enter the service operator ID", "action": "fill"}
+{"seq": 6, "ts": "2026-09-24T20:19:38+00:00", "t_ms": 1021, "type": "policy", "step": "enter_operator_id", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 7, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1389, "type": "step_ok", "step": "enter_operator_id", "strategy": "role_name", "agreeing": 1, "ms": 422}
+{"seq": 8, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1435, "type": "step_start", "step": "enter_password", "index": 2, "intent": "Enter the service operator password", "action": "fill"}
+{"seq": 9, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1471, "type": "policy", "step": "enter_password", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 10, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1820, "type": "step_ok", "step": "enter_password", "strategy": "role_name", "agreeing": 1, "ms": 385}
+{"seq": 11, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1865, "type": "step_start", "step": "sign_on", "index": 3, "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-24T20:19:39+00:00", "t_ms": 1903, "type": "policy", "step": "sign_on", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 13, "ts": "2026-09-24T20:19:40+00:00", "t_ms": 2552, "type": "step_ok", "step": "sign_on", "strategy": "role_name", "agreeing": 1, "ms": 686}
+{"seq": 14, "ts": "2026-09-24T20:19:40+00:00", "t_ms": 2629, "type": "authenticated", "tenant": "acme"}
+{"seq": 15, "ts": "2026-09-24T20:19:40+00:00", "t_ms": 3167, "type": "step_start", "step": "click_member_inquiry", "index": 0, "intent": "Open Member Inquiry", "action": "click"}
+{"seq": 16, "ts": "2026-09-24T20:19:40+00:00", "t_ms": 3280, "type": "policy", "step": "click_member_inquiry", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 17, "ts": "2026-09-24T20:19:41+00:00", "t_ms": 3823, "type": "step_ok", "step": "click_member_inquiry", "strategy": "role_name", "agreeing": 1, "ms": 655}
+{"seq": 18, "ts": "2026-09-24T20:19:41+00:00", "t_ms": 3896, "type": "step_start", "step": "enter_member", "index": 1, "intent": "Enter member ID", "action": "fill"}
+{"seq": 19, "ts": "2026-09-24T20:19:41+00:00", "t_ms": 4015, "type": "policy", "step": "enter_member", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 20, "ts": "2026-09-24T20:19:42+00:00", "t_ms": 4485, "type": "step_ok", "step": "enter_member", "strategy": "role_name", "agreeing": 2, "ms": 589}
+{"seq": 21, "ts": "2026-09-24T20:19:42+00:00", "t_ms": 4574, "type": "step_start", "step": "click_inquire", "index": 2, "intent": "Inquire member details", "action": "click"}
+{"seq": 22, "ts": "2026-09-24T20:19:42+00:00", "t_ms": 4679, "type": "policy", "step": "click_inquire", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 23, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 5351, "type": "step_ok", "step": "click_inquire", "strategy": "role_name", "agreeing": 1, "ms": 776}
+{"seq": 24, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 5426, "type": "step_start", "step": "click_view", "index": 3, "intent": "View member details", "action": "click"}
+{"seq": 25, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 5549, "type": "policy", "step": "click_view", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 26, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 6077, "type": "step_ok", "step": "click_view", "strategy": "table_cell", "agreeing": 2, "ms": 650}
+{"seq": 27, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 6171, "type": "step_start", "step": "read_primary_savings_balance", "index": 4, "intent": "The current balance of the member's primary savings account", "action": "extract"}
+{"seq": 28, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 6298, "type": "policy", "step": "read_primary_savings_balance", "risk": "read_only", "allowed": true, "reason": "safe/reversible"}
+{"seq": 29, "ts": "2026-09-24T20:19:43+00:00", "t_ms": 6301, "type": "extracted", "step": "read_primary_savings_balance", "output": "primary_savings_balance", "value": "fp:1a4327f904"}
+{"seq": 30, "ts": "2026-09-24T20:19:44+00:00", "t_ms": 6740, "type": "step_ok", "step": "read_primary_savings_balance", "strategy": "table_cell", "agreeing": 2, "ms": 569}
+{"seq": 31, "ts": "2026-09-24T20:19:44+00:00", "t_ms": 6828, "type": "checkpoint_ok", "description": "Reached the target screen: Member Detail"}
+{"seq": 32, "ts": "2026-09-24T20:19:44+00:00", "t_ms": 6950, "type": "run_end", "status": "succeeded", "outcome": null, "error": null}

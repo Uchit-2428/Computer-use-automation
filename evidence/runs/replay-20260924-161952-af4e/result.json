@@ -1,0 +1,38 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-161952-af4e",
+  "capability": "member.get_savings_balance@1.0.0",
+  "tenant": "acme",
+  "status": "business_outcome",
+  "outputs": {},
+  "outcome": {
+    "code": "MEMBER_NOT_FOUND",
+    "message": "NO MEMBER FOUND FOR NUMBER \u2022\u2022\u2022\u20229999",
+    "step_id": "click_inquire",
+    "declared": true
+  },
+  "recoveries": [],
+  "interventions": [],
+  "steps": [
+    {
+      "step_id": "click_member_inquiry",
+      "index": 0,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 668
+    },
+    {
+      "step_id": "enter_member",
+      "index": 1,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 602
+    }
+  ],
+  "warnings": [],
+  "started_at": "2026-09-24T20:19:52+00:00",
+  "duration_ms": 5742,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-161952-af4e"
+}

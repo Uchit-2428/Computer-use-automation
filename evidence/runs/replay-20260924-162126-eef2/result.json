@@ -1,0 +1,56 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162126-eef2",
+  "capability": "share.open_account_to_review@1.0.0",
+  "tenant": "acme",
+  "status": "succeeded",
+  "outputs": {},
+  "recoveries": [],
+  "interventions": [],
+  "steps": [
+    {
+      "step_id": "click_new_share_account",
+      "index": 0,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 855
+    },
+    {
+      "step_id": "enter_member",
+      "index": 1,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 635
+    },
+    {
+      "step_id": "select_share_type",
+      "index": 2,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 619
+    },
+    {
+      "step_id": "enter_initial_deposit",
+      "index": 3,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 644
+    },
+    {
+      "step_id": "click_continue",
+      "index": 4,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 622
+    }
+  ],
+  "warnings": [],
+  "started_at": "2026-09-24T20:21:26+00:00",
+  "duration_ms": 7282,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162126-eef2"
+}

@@ -1,0 +1,13 @@
+{
+  "status": "succeeded",
+  "reason": "",
+  "run_id": "discovery-[PAN]233e",
+  "steps": 5,
+  "capability": "member.get_savings_balance@1.0.0",
+  "usage": {
+    "input_tokens": 18896,
+    "output_tokens": 342,
+    "calls": 6
+  },
+  "model": "gemini-3.6-flash"
+}

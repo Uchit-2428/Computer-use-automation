@@ -24,11 +24,28 @@ from .schema import Sensitivity
 _SECRET_KEYS = re.compile(r"(pass(word)?|pwd|secret|token|cookie|authorization|api[_-]?key|supcd)", re.I)
 _PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[SSN]"),
-    (re.compile(r"\b(?:\d[ -]?){13,19}\b"), "[PAN]"),
     (re.compile(r"sk-ant-[A-Za-z0-9_\-]+"), "[API_KEY]"),
     (re.compile(r"AIza[0-9A-Za-z_\-]{30,}"), "[API_KEY]"),
 ]
 _CURRENCY = re.compile(r"\$\s?[\d,]+\.\d{2}")
+# card numbers: 13-19 digits, contiguous or in 4-digit groups, and Luhn-valid (so run ids,
+# timestamps and reference numbers are not over-masked)
+_PAN = re.compile(r"\b(?:\d{4}[ -]){2,3}\d{1,7}\b|\b\d{13,19}\b")
+
+
+def _luhn(digits: str) -> bool:
+    total = 0
+    for i, ch in enumerate(reversed(digits)):
+        d = int(ch)
+        if i % 2:
+            d = d * 2 - 9 if d > 4 else d * 2
+        total += d
+    return total % 10 == 0
+
+
+def _mask_pan(m: re.Match[str]) -> str:
+    digits = re.sub(r"\D", "", m.group(0))
+    return "[PAN]" if 13 <= len(digits) <= 19 and _luhn(digits) else m.group(0)
 
 
 class Redactor:
@@ -72,6 +89,7 @@ class Redactor:
             s = s.replace(v, self._values[v])
         for pat, rep in _PATTERNS:
             s = pat.sub(rep, s)
+        s = _PAN.sub(_mask_pan, s)
         for pat in self._pii:
             s = pat.sub("[PII]", s)
         if self.mask_currency:

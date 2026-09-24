@@ -1,0 +1,21 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162010-4ae7",
+  "capability": "member.get_savings_balance@1.0.0",
+  "tenant": "acme",
+  "status": "rejected",
+  "outputs": {},
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "'member_id' must be an integer; 'member_id' does not match \\d{1,10}",
+    "retryable": false,
+    "evidence": []
+  },
+  "recoveries": [],
+  "interventions": [],
+  "steps": [],
+  "warnings": [],
+  "started_at": "2026-09-24T20:20:10+00:00",
+  "duration_ms": 0,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162010-4ae7"
+}

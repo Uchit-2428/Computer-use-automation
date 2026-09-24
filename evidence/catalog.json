@@ -1,0 +1,70 @@
+[
+  {
+    "name": "member__get_savings_balance",
+    "description": "Look up a member's details and retrieve their primary savings account balance.\nReturns outputs -> primary_savings_balance: currency - The current balance of the member's primary savings account.\nMay instead return a business outcome: MEMBER_NOT_FOUND, PERMISSION_DENIED, OVERRIDE_REJECTED, VALIDATION_ERROR.\nRisk: reversible. Capability member.get_savings_balance@1.0.0 (approved).",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "type": "string",
+          "enum": [
+            "acme",
+            "bayside"
+          ],
+          "description": "Institution to run against."
+        },
+        "member_id": {
+          "type": "string",
+          "description": "Credit-union member number (1-8 digits) (integer)",
+          "pattern": "^\\d{1,10}$"
+        }
+      },
+      "required": [
+        "tenant",
+        "member_id"
+      ]
+    }
+  },
+  {
+    "name": "share__open_account_to_review",
+    "description": "Navigates to the New Share Account screen, populates member ID, share type, and initial deposit, and proceeds to the review screen without confirming.\nReturns outputs -> none.\nMay instead return a business outcome: MEMBER_NOT_FOUND, PERMISSION_DENIED, OVERRIDE_REJECTED, VALIDATION_ERROR.\nRisk: reversible. Capability share.open_account_to_review@1.0.0 (approved).",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "type": "string",
+          "enum": [
+            "acme",
+            "bayside"
+          ],
+          "description": "Institution to run against."
+        },
+        "member_id": {
+          "type": "string",
+          "description": "Credit-union member number (1-8 digits) (integer)",
+          "pattern": "^\\d{1,10}$"
+        },
+        "share_type": {
+          "type": "string",
+          "description": "Share product to open (enum)",
+          "enum": [
+            "REGULAR SAVINGS",
+            "HOLIDAY CLUB",
+            "VACATION CLUB",
+            "CERTIFICATE 12M"
+          ]
+        },
+        "initial_deposit": {
+          "type": "string",
+          "description": "Initial deposit in dollars, e.g. 25.00 (decimal)"
+        }
+      },
+      "required": [
+        "tenant",
+        "member_id",
+        "share_type",
+        "initial_deposit"
+      ]
+    }
+  }
+]

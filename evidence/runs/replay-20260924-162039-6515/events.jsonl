@@ -1,0 +1,27 @@
+{"seq": 1, "ts": "2026-09-24T20:20:39+00:00", "t_ms": 0, "type": "run_start", "capability": "member.get_savings_balance@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20220234"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 499, "type": "session", "session": "sess-f4432867"}
+{"seq": 3, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 499, "type": "step_start", "step": "open_signon", "index": 0, "intent": "Open the operator sign-on screen", "action": "navigate"}
+{"seq": 4, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 900, "type": "step_ok", "step": "open_signon", "strategy": null, "agreeing": null, "ms": 400}
+{"seq": 5, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 957, "type": "step_start", "step": "enter_operator_id", "index": 1, "intent": "Enter the service operator ID", "action": "fill"}
+{"seq": 6, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 1015, "type": "policy", "step": "enter_operator_id", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 7, "ts": "2026-09-24T20:20:40+00:00", "t_ms": 1384, "type": "step_ok", "step": "enter_operator_id", "strategy": "role_name", "agreeing": 1, "ms": 427}
+{"seq": 8, "ts": "2026-09-24T20:20:41+00:00", "t_ms": 1436, "type": "step_start", "step": "enter_password", "index": 2, "intent": "Enter the service operator password", "action": "fill"}
+{"seq": 9, "ts": "2026-09-24T20:20:41+00:00", "t_ms": 1474, "type": "policy", "step": "enter_password", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 10, "ts": "2026-09-24T20:20:41+00:00", "t_ms": 1833, "type": "step_ok", "step": "enter_password", "strategy": "role_name", "agreeing": 1, "ms": 396}
+{"seq": 11, "ts": "2026-09-24T20:20:41+00:00", "t_ms": 1895, "type": "step_start", "step": "sign_on", "index": 3, "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-24T20:20:41+00:00", "t_ms": 1939, "type": "policy", "step": "sign_on", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 13, "ts": "2026-09-24T20:20:42+00:00", "t_ms": 2614, "type": "step_ok", "step": "sign_on", "strategy": "role_name", "agreeing": 1, "ms": 719}
+{"seq": 14, "ts": "2026-09-24T20:20:42+00:00", "t_ms": 2678, "type": "authenticated", "tenant": "acme"}
+{"seq": 15, "ts": "2026-09-24T20:20:42+00:00", "t_ms": 3223, "type": "step_start", "step": "click_member_inquiry", "index": 0, "intent": "Open Member Inquiry", "action": "click"}
+{"seq": 16, "ts": "2026-09-24T20:20:42+00:00", "t_ms": 3338, "type": "policy", "step": "click_member_inquiry", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 17, "ts": "2026-09-24T20:20:43+00:00", "t_ms": 3930, "type": "step_ok", "step": "click_member_inquiry", "strategy": "role_name", "agreeing": 1, "ms": 707}
+{"seq": 18, "ts": "2026-09-24T20:20:43+00:00", "t_ms": 4022, "type": "step_start", "step": "enter_member", "index": 1, "intent": "Enter member ID", "action": "fill"}
+{"seq": 19, "ts": "2026-09-24T20:20:43+00:00", "t_ms": 4144, "type": "policy", "step": "enter_member", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 20, "ts": "2026-09-24T20:20:44+00:00", "t_ms": 4614, "type": "step_ok", "step": "enter_member", "strategy": "role_name", "agreeing": 2, "ms": 591}
+{"seq": 21, "ts": "2026-09-24T20:20:44+00:00", "t_ms": 4692, "type": "step_start", "step": "click_inquire", "index": 2, "intent": "Inquire member details", "action": "click"}
+{"seq": 22, "ts": "2026-09-24T20:20:44+00:00", "t_ms": 4816, "type": "policy", "step": "click_inquire", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 23, "ts": "2026-09-24T20:20:44+00:00", "t_ms": 5335, "type": "step_ok", "step": "click_inquire", "strategy": "role_name", "agreeing": 1, "ms": 642}
+{"seq": 24, "ts": "2026-09-24T20:20:44+00:00", "t_ms": 5400, "type": "step_start", "step": "click_view", "index": 3, "intent": "View member details", "action": "click"}
+{"seq": 25, "ts": "2026-09-24T20:20:45+00:00", "t_ms": 5535, "type": "policy", "step": "click_view", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 26, "ts": "2026-09-24T20:20:45+00:00", "t_ms": 5964, "type": "rule_matched", "step": "click_view", "code": "APP_ERROR", "kind": "failure", "message": "SYSTEM ERROR SYS-0042 An unexpected condition occurred in module CLINQ02. Contact your system administrator. Reference 978A454A"}
+{"seq": 27, "ts": "2026-09-24T20:20:45+00:00", "t_ms": 6136, "type": "run_end", "status": "failed", "outcome": null, "error": "APP_ERROR"}

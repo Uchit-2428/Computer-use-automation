@@ -1,0 +1,21 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162134-54f6",
+  "capability": "share.open_account_and_confirm@1.0.0",
+  "tenant": "acme",
+  "status": "rejected",
+  "outputs": {},
+  "error": {
+    "code": "CONFIRMATION_REQUIRED",
+    "message": "irreversible step requires explicit caller confirmation",
+    "retryable": false,
+    "evidence": []
+  },
+  "recoveries": [],
+  "interventions": [],
+  "steps": [],
+  "warnings": [],
+  "started_at": "2026-09-24T20:21:34+00:00",
+  "duration_ms": 1,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162134-54f6"
+}

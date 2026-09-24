@@ -1,0 +1,375 @@
+{
+  "schema": "cua.capability/v1",
+  "id": "share.open_account_and_confirm",
+  "version": "1.0.0",
+  "title": "Open share account AND confirm (policy demo)",
+  "description": "Derived from share.open_account_to_review with one added irreversible step, to demonstrate the replay gate. Not in the catalog.",
+  "app": {
+    "product": "corelink-teller",
+    "profile": "corelink-teller@1",
+    "product_versions": ">=4.2 <5",
+    "surface": "legacy_web"
+  },
+  "entry": {
+    "url": "{{tenant.base_url}}/main",
+    "requires_session": true
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "integer",
+      "description": "Credit-union member number (1-8 digits)",
+      "required": true,
+      "pattern": "\\d{1,10}",
+      "sensitivity": "pii",
+      "example": "100871"
+    },
+    {
+      "name": "share_type",
+      "type": "enum",
+      "description": "Share product to open",
+      "required": true,
+      "enum": [
+        "REGULAR SAVINGS",
+        "HOLIDAY CLUB",
+        "VACATION CLUB",
+        "CERTIFICATE 12M"
+      ],
+      "sensitivity": "internal"
+    },
+    {
+      "name": "initial_deposit",
+      "type": "decimal",
+      "description": "Initial deposit in dollars, e.g. 25.00",
+      "required": true,
+      "sensitivity": "internal",
+      "example": "25.00"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "id": "click_new_share_account",
+      "intent": "Open New Share Account form",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "New Share Account link",
+          "frame": {
+            "name": "nav"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "New Share Account"
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[3]/td[1]/a[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 14.0,
+            "y": 72.0,
+            "w": 157.0,
+            "h": 19.0
+          }
+        }
+      },
+      "risk": "reversible",
+      "expect": [
+        {
+          "kind": "url_matches",
+          "pattern": "^{{tenant.base_path}}/work/newshare(\\?.*)?$",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "title_is",
+          "title": "CoreLink - New Share Account",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "New Share Account",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        }
+      ],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "enter_member",
+      "intent": "Enter Member Number",
+      "action": {
+        "type": "fill",
+        "target": {
+          "description": "Member # field",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Member #"
+            },
+            {
+              "kind": "attribute",
+              "tag": "input",
+              "attrs": {
+                "name": "P_MBR"
+              }
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "attribute",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 131.0,
+            "y": 37.0,
+            "w": 83.0,
+            "h": 21.0
+          }
+        },
+        "value": "{{inputs.member_id}}"
+      },
+      "risk": "reversible",
+      "expect": [],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "select_share_type",
+      "intent": "Select share type",
+      "action": {
+        "type": "select",
+        "target": {
+          "description": "Share Type drop-down",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "combobox",
+              "name": "Share Type"
+            },
+            {
+              "kind": "attribute",
+              "tag": "select",
+              "attrs": {
+                "name": "SHTYPE"
+              }
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[2]/td[2]/select[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "attribute",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 131.0,
+            "y": 66.0,
+            "w": 149.0,
+            "h": 19.0
+          }
+        },
+        "option": "{{inputs.share_type}}"
+      },
+      "risk": "reversible",
+      "expect": [],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "enter_initial_deposit",
+      "intent": "Enter initial deposit amount",
+      "action": {
+        "type": "fill",
+        "target": {
+          "description": "Initial Deposit field",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Initial Deposit"
+            },
+            {
+              "kind": "attribute",
+              "tag": "input",
+              "attrs": {
+                "name": "DEP"
+              }
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[4]/td[2]/input[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "attribute",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 131.0,
+            "y": 122.0,
+            "w": 83.0,
+            "h": 21.0
+          }
+        },
+        "value": "{{inputs.initial_deposit}}"
+      },
+      "risk": "reversible",
+      "expect": [],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "click_continue",
+      "intent": "Click Continue to proceed to review screen",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "Continue button",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Continue"
+            },
+            {
+              "note": "diagnostic/last resort; replay skips it while semantic strategies exist",
+              "kind": "xpath",
+              "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[5]/td[2]/input[1]"
+            }
+          ],
+          "validated": [
+            "role_name",
+            "xpath"
+          ],
+          "visual_hint": {
+            "x": 131.0,
+            "y": 151.0,
+            "w": 69.0,
+            "h": 21.0
+          }
+        }
+      },
+      "risk": "reversible",
+      "expect": [
+        {
+          "kind": "title_is",
+          "title": "CoreLink - Review New Share Account",
+          "frame": {
+            "name": "work"
+          }
+        },
+        {
+          "kind": "text_visible",
+          "text": "Review New Share Account",
+          "regex": false,
+          "frame": {
+            "name": "work"
+          }
+        }
+      ],
+      "timeout_ms": 10000,
+      "source": "agent"
+    },
+    {
+      "id": "click_confirm",
+      "intent": "Commit: open the share and post the deposit",
+      "risk": "irreversible",
+      "source": "reviewer",
+      "action": {
+        "type": "click",
+        "target": {
+          "description": "Confirm button",
+          "frame": {
+            "name": "work"
+          },
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Confirm"
+            }
+          ]
+        }
+      },
+      "expect": [
+        {
+          "kind": "text_visible",
+          "text": "SHARE ACCOUNT OPENED",
+          "frame": {
+            "name": "work"
+          }
+        }
+      ]
+    }
+  ],
+  "checkpoint": {
+    "description": "Share opened",
+    "all_of": [
+      {
+        "kind": "text_visible",
+        "text": "SHARE ACCOUNT OPENED"
+      }
+    ],
+    "require_outputs": false
+  },
+  "outcomes": [],
+  "declared_outcomes": [
+    "MEMBER_NOT_FOUND",
+    "PERMISSION_DENIED",
+    "OVERRIDE_REJECTED",
+    "VALIDATION_ERROR"
+  ],
+  "provenance": {
+    "method": "llm_discovery",
+    "recorded_at": "2026-09-24T20:10:10+00:00",
+    "model": "gemini-3.6-flash",
+    "discovery_run_id": "discovery-20260924-160907-4596",
+    "goal": "Start opening a new {{share_type}} share account for member {{member_id}} with an initial deposit of {{initial_deposit}}, and stop on the review/confirmation screen without confirming",
+    "tenant": "acme",
+    "app_version": "4.2.1",
+    "human_steps": 0
+  },
+  "review": {
+    "status": "draft",
+    "notes": "Policy demo artifact: hand-derived, never approved."
+  }
+}

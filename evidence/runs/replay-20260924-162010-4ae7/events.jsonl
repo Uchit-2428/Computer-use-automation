@@ -1,0 +1,2 @@
+{"seq": 1, "ts": "2026-09-24T20:20:10+00:00", "t_ms": 0, "type": "run_start", "capability": "member.get_savings_balance@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u2022"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:20:10+00:00", "t_ms": 0, "type": "run_end", "status": "rejected", "outcome": null, "error": "INVALID_INPUT"}

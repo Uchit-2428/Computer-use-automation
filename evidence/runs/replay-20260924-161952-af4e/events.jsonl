@@ -1,0 +1,24 @@
+{"seq": 1, "ts": "2026-09-24T20:19:52+00:00", "t_ms": 0, "type": "run_start", "capability": "member.get_savings_balance@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20229999"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:19:53+00:00", "t_ms": 527, "type": "session", "session": "sess-e03dab82"}
+{"seq": 3, "ts": "2026-09-24T20:19:53+00:00", "t_ms": 528, "type": "step_start", "step": "open_signon", "index": 0, "intent": "Open the operator sign-on screen", "action": "navigate"}
+{"seq": 4, "ts": "2026-09-24T20:19:53+00:00", "t_ms": 958, "type": "step_ok", "step": "open_signon", "strategy": null, "agreeing": null, "ms": 430}
+{"seq": 5, "ts": "2026-09-24T20:19:53+00:00", "t_ms": 1017, "type": "step_start", "step": "enter_operator_id", "index": 1, "intent": "Enter the service operator ID", "action": "fill"}
+{"seq": 6, "ts": "2026-09-24T20:19:53+00:00", "t_ms": 1072, "type": "policy", "step": "enter_operator_id", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 7, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 1450, "type": "step_ok", "step": "enter_operator_id", "strategy": "role_name", "agreeing": 1, "ms": 433}
+{"seq": 8, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 1509, "type": "step_start", "step": "enter_password", "index": 2, "intent": "Enter the service operator password", "action": "fill"}
+{"seq": 9, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 1550, "type": "policy", "step": "enter_password", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 10, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 1914, "type": "step_ok", "step": "enter_password", "strategy": "role_name", "agreeing": 1, "ms": 405}
+{"seq": 11, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 1964, "type": "step_start", "step": "sign_on", "index": 3, "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-24T20:19:54+00:00", "t_ms": 2001, "type": "policy", "step": "sign_on", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 13, "ts": "2026-09-24T20:19:55+00:00", "t_ms": 2662, "type": "step_ok", "step": "sign_on", "strategy": "role_name", "agreeing": 1, "ms": 698}
+{"seq": 14, "ts": "2026-09-24T20:19:55+00:00", "t_ms": 2743, "type": "authenticated", "tenant": "acme"}
+{"seq": 15, "ts": "2026-09-24T20:19:55+00:00", "t_ms": 3306, "type": "step_start", "step": "click_member_inquiry", "index": 0, "intent": "Open Member Inquiry", "action": "click"}
+{"seq": 16, "ts": "2026-09-24T20:19:55+00:00", "t_ms": 3425, "type": "policy", "step": "click_member_inquiry", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 17, "ts": "2026-09-24T20:19:56+00:00", "t_ms": 3974, "type": "step_ok", "step": "click_member_inquiry", "strategy": "role_name", "agreeing": 1, "ms": 668}
+{"seq": 18, "ts": "2026-09-24T20:19:56+00:00", "t_ms": 4043, "type": "step_start", "step": "enter_member", "index": 1, "intent": "Enter member ID", "action": "fill"}
+{"seq": 19, "ts": "2026-09-24T20:19:56+00:00", "t_ms": 4173, "type": "policy", "step": "enter_member", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 20, "ts": "2026-09-24T20:19:57+00:00", "t_ms": 4646, "type": "step_ok", "step": "enter_member", "strategy": "role_name", "agreeing": 2, "ms": 602}
+{"seq": 21, "ts": "2026-09-24T20:19:57+00:00", "t_ms": 4735, "type": "step_start", "step": "click_inquire", "index": 2, "intent": "Inquire member details", "action": "click"}
+{"seq": 22, "ts": "2026-09-24T20:19:57+00:00", "t_ms": 4872, "type": "policy", "step": "click_inquire", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 23, "ts": "2026-09-24T20:19:58+00:00", "t_ms": 5532, "type": "rule_matched", "step": "click_inquire", "code": "MEMBER_NOT_FOUND", "kind": "business", "message": "NO MEMBER FOUND FOR NUMBER \u2022\u2022\u2022\u20229999"}
+{"seq": 24, "ts": "2026-09-24T20:19:58+00:00", "t_ms": 5742, "type": "run_end", "status": "business_outcome", "outcome": "MEMBER_NOT_FOUND", "error": null}

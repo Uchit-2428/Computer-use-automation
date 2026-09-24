@@ -65,6 +65,12 @@ def test_redaction_masks_by_sensitivity():
     assert "4111" not in out and "123-45-6789" not in out
 
 
+def test_redaction_does_not_mask_ids_that_look_numeric():
+    r = Redactor(key=b"k")
+    s = "run discovery-20260924-160310-233e ref 20260924160310"
+    assert r.text(s) == s  # not Luhn-valid card numbers
+
+
 def test_redaction_scrubs_secret_keys_and_is_deterministic():
     r = Redactor(key=b"k")
     assert r.scrub({"password": "hunter2", "nested": {"api_key": "x"}}) == {"password": "[SECRET]", "nested": {"api_key": "[SECRET]"}}

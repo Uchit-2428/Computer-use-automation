@@ -1,0 +1,24 @@
+{"seq": 1, "ts": "2026-09-24T20:19:58+00:00", "t_ms": 0, "type": "run_start", "capability": "member.get_savings_balance@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20225555"}, "review": "approved", "max_risk": "reversible"}
+{"seq": 2, "ts": "2026-09-24T20:19:59+00:00", "t_ms": 504, "type": "session", "session": "sess-66d96d1c"}
+{"seq": 3, "ts": "2026-09-24T20:19:59+00:00", "t_ms": 504, "type": "step_start", "step": "open_signon", "index": 0, "intent": "Open the operator sign-on screen", "action": "navigate"}
+{"seq": 4, "ts": "2026-09-24T20:19:59+00:00", "t_ms": 913, "type": "step_ok", "step": "open_signon", "strategy": null, "agreeing": null, "ms": 408}
+{"seq": 5, "ts": "2026-09-24T20:19:59+00:00", "t_ms": 993, "type": "step_start", "step": "enter_operator_id", "index": 1, "intent": "Enter the service operator ID", "action": "fill"}
+{"seq": 6, "ts": "2026-09-24T20:19:59+00:00", "t_ms": 1050, "type": "policy", "step": "enter_operator_id", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 7, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1425, "type": "step_ok", "step": "enter_operator_id", "strategy": "role_name", "agreeing": 1, "ms": 432}
+{"seq": 8, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1479, "type": "step_start", "step": "enter_password", "index": 2, "intent": "Enter the service operator password", "action": "fill"}
+{"seq": 9, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1522, "type": "policy", "step": "enter_password", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 10, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1884, "type": "step_ok", "step": "enter_password", "strategy": "role_name", "agreeing": 1, "ms": 405}
+{"seq": 11, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1933, "type": "step_start", "step": "sign_on", "index": 3, "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-24T20:20:00+00:00", "t_ms": 1980, "type": "policy", "step": "sign_on", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 13, "ts": "2026-09-24T20:20:01+00:00", "t_ms": 2623, "type": "step_ok", "step": "sign_on", "strategy": "role_name", "agreeing": 1, "ms": 690}
+{"seq": 14, "ts": "2026-09-24T20:20:01+00:00", "t_ms": 2688, "type": "authenticated", "tenant": "acme"}
+{"seq": 15, "ts": "2026-09-24T20:20:01+00:00", "t_ms": 3223, "type": "step_start", "step": "click_member_inquiry", "index": 0, "intent": "Open Member Inquiry", "action": "click"}
+{"seq": 16, "ts": "2026-09-24T20:20:02+00:00", "t_ms": 3352, "type": "policy", "step": "click_member_inquiry", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 17, "ts": "2026-09-24T20:20:02+00:00", "t_ms": 3903, "type": "step_ok", "step": "click_member_inquiry", "strategy": "role_name", "agreeing": 1, "ms": 679}
+{"seq": 18, "ts": "2026-09-24T20:20:02+00:00", "t_ms": 3990, "type": "step_start", "step": "enter_member", "index": 1, "intent": "Enter member ID", "action": "fill"}
+{"seq": 19, "ts": "2026-09-24T20:20:02+00:00", "t_ms": 4144, "type": "policy", "step": "enter_member", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 20, "ts": "2026-09-24T20:20:03+00:00", "t_ms": 4627, "type": "step_ok", "step": "enter_member", "strategy": "role_name", "agreeing": 2, "ms": 636}
+{"seq": 21, "ts": "2026-09-24T20:20:03+00:00", "t_ms": 4709, "type": "step_start", "step": "click_inquire", "index": 2, "intent": "Inquire member details", "action": "click"}
+{"seq": 22, "ts": "2026-09-24T20:20:03+00:00", "t_ms": 4813, "type": "policy", "step": "click_inquire", "risk": "reversible", "allowed": true, "reason": "safe/reversible"}
+{"seq": 23, "ts": "2026-09-24T20:20:04+00:00", "t_ms": 5303, "type": "rule_matched", "step": "click_inquire", "code": "PERMISSION_DENIED", "kind": "business", "message": "ACCESS DENIED - RESTRICTED ACCOUNT (SEC-11)"}
+{"seq": 24, "ts": "2026-09-24T20:20:04+00:00", "t_ms": 5452, "type": "run_end", "status": "business_outcome", "outcome": "PERMISSION_DENIED", "error": null}

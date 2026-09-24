@@ -5,6 +5,6 @@
   "product": "corelink-teller",
   "app_version": "4.3.0",
   "secrets": {"operator_id": "env:CORELINK_OPERATOR_ID", "operator_password": "env:CORELINK_OPERATOR_PASSWORD"},
-  "overlays": [],
+  "overlays": ["config/overlays/bayside.member.get_savings_balance.json"],
   "data_classification": "synthetic"
 }

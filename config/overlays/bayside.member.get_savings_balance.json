@@ -1,0 +1,20 @@
+{
+  "schema": "cua.tenant-overlay/v1",
+  "id": "bayside-member-balance-v1",
+  "tenant": "bayside",
+  "capability": "member.get_savings_balance",
+  "capability_versions": "1.x",
+  "reason": "Bayside runs CoreLink 4.3.0 configured with different labels: the search button reads 'Search' (not 'Inquire') and the balance column reads 'Current Bal' (not 'Balance'). Every other step works unchanged (the member field resolves via its form-field name P_MBR, the Open/View link via its member-number row key).",
+  "target_overrides": {
+    "click_inquire": {
+      "description": "Search button",
+      "frame": {"name": "work"},
+      "strategies": [{"kind": "role_name", "role": "button", "name": "Search"}]
+    },
+    "read_primary_savings_balance": {
+      "description": "Primary savings current balance",
+      "frame": {"name": "work"},
+      "strategies": [{"kind": "table_cell", "column": "Current Bal", "row_key": "PRIMARY SAVINGS"}]
+    }
+  }
+}

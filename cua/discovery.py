@@ -172,6 +172,7 @@ async def discover(goal: str, tenant: TenantConfig, profile: AppProfile, policy:
     goal_for_model = view.hide(goal)
     res = DiscoveryResult(status="failed", run_id=run_id, evidence_dir=str(ev.dir))
     usage = {"input_tokens": 0, "output_tokens": 0, "calls": 0}
+    models_used: list[str] = []  # the provider may fail over between models mid-run
     ev.event("discovery_start", goal=goal_for_model, tenant=tenant.id, model=decider.model,
              params=[{"name": p.name, "type": p.type.value, "sensitivity": p.sensitivity.value} for p in params])
 
@@ -224,6 +225,8 @@ async def discover(goal: str, tenant: TenantConfig, profile: AppProfile, policy:
                       f"OUTPUTS EXTRACTED SO FAR: {outs}\n\nSTEP {i + 1} of max {max_steps}\n\nHISTORY:\n"
                       + ("\n".join(history[-14:]) or "(start)") + f"\n\nCURRENT SCREEN:\n{screen}")
             call = await decider.decide(SYSTEM_PROMPT, prompt, img, TOOLS)
+            if call.model and call.model not in models_used:
+                models_used.append(call.model)
             usage["calls"] += 1
             for k in ("input_tokens", "output_tokens"):
                 usage[k] += int(call.usage.get(k, 0) or 0)
@@ -341,7 +344,7 @@ async def discover(goal: str, tenant: TenantConfig, profile: AppProfile, policy:
 
         if finish_args is not None:
             cap = await _compile(finish_args, capability_id, goal, tenant, profile, params, recorded, outputs, start_obs, surface, tmpl,
-                                 run_id, decider.model, human_actions, entry_url, view)
+                                 run_id, ", ".join(models_used) or decider.model, human_actions, entry_url, view)
             path = _save(cap, save_dir)
             ev.write_json("capability.json", json.loads(cap.dump()))
             res.status, res.capability, res.capability_path = "succeeded", cap, str(path)
@@ -361,7 +364,8 @@ async def discover(goal: str, tenant: TenantConfig, profile: AppProfile, policy:
         res.usage = usage
         ev.event("discovery_end", status=res.status, reason=res.reason, steps=res.steps, usage=usage)
         ev.write_json("discovery_result.json", {"status": res.status, "reason": res.reason, "run_id": run_id, "steps": res.steps,
-                                                "capability": res.capability.ref if res.capability else None, "usage": usage, "model": decider.model})
+                                                "capability": res.capability.ref if res.capability else None, "usage": usage, "model": decider.model,
+                                                "models_used": models_used})
         transcript.close()
         ev.close()
         controller.close()

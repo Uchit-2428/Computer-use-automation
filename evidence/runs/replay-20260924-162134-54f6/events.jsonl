@@ -1,0 +1,2 @@
+{"seq": 1, "ts": "2026-09-24T20:21:34+00:00", "t_ms": 0, "type": "run_start", "capability": "share.open_account_and_confirm@1.0.0", "tenant": "acme", "inputs": {"member_id": "\u2022\u2022\u2022\u20220871", "share_type": "VACATION CLUB", "initial_deposit": "50.00"}, "review": "draft", "max_risk": "irreversible"}
+{"seq": 2, "ts": "2026-09-24T20:21:34+00:00", "t_ms": 1, "type": "run_end", "status": "rejected", "outcome": null, "error": "CONFIRMATION_REQUIRED"}

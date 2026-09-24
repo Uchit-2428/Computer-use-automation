@@ -32,9 +32,12 @@ A single Python process (asyncio + Playwright) with hard internal seams:
   Choosing *how to find it again* is the recorder's job, and the recorder validates its choices
   against the live page.
 - **Stateless model turns.** Each request carries the goal, parameters, a compact history and the
-  current screen, so tokens stay bounded regardless of run length. The model is Claude, called
-  through the Messages API with forced single tool use. `Decider` is a one-method seam, so a
-  scripted decider can replay an earlier model run's decisions offline.
+  current screen, so tokens stay bounded regardless of run length (about 3k input tokens per
+  step in the evidence). Providers sit behind a one-method `Decider` seam: Gemini (function calling,
+  mode ANY) and Claude (forced single tool use). A scripted decider can replay an earlier run's
+  decisions offline. The evidence runs used free-tier Gemini Flash. The Gemini client handles
+  retired models (404) and sustained overload (503) by failing over to another Flash model, and
+  the transcript records which model answered each call.
 - **Single process, no queue.** The browser session, the replay loop and the operator console
   share one event loop, and that is what makes a same-session handoff simple and correct. §5 covers
   how this splits into services.
@@ -148,8 +151,8 @@ Artifacts don't change across surfaces. Only the driver does.
    postconditions, checkpoint, extra outcome rules), scoped to a capability major version.
 
 Demonstrated: Bayside runs 4.3.0 with a relabelled field, button and column. The base artifact
-fails on the relabelled button with `TARGET_NOT_FOUND` at `click_search_button`, naming the
-candidate `'Search'`. It warns that the member field survived via its `attribute` fallback. With a
+fails on the relabelled button with `TARGET_NOT_FOUND` at `click_inquire`, naming the
+candidate `button 'Search'`. It warns that the member field survived via its `attribute` fallback. With a
 two-entry overlay, the same artifact succeeds.
 
 **Drift management** at scale: run each approved capability on a schedule against a canary
@@ -202,9 +205,11 @@ same.
 - **Risk classes:** `read_only`, `reversible` and `irreversible`, classified from the live
   control's role and name (policy patterns plus the product's `irreversible_labels`). Replay takes
   the max of the artifact's label and the live classification, so a tampered artifact can't
-  downgrade risk. Discovery **blocks** irreversible actions and tells the model why (evidence shows
-  **Confirm** refused while the second flow still reached the review screen). Replay refuses to
-  *start* an irreversible capability unless the caller passes explicit confirmation. It also never
+  downgrade risk. Discovery **blocks** irreversible actions and tells the model why. In the
+  evidence run the model stopped on the review screen by itself; the block is exercised by
+  `test_discovery_blocks_irreversible_click`. Replay refuses to
+  *start* an irreversible capability unless the caller passes explicit confirmation (scenario
+  `rejected-irreversible-unconfirmed`). It also never
   restarts after an irreversible step. I chose confirmation over flat blocking because some
   capabilities legitimately commit, but only with an approved artifact plus explicit caller intent.
 - **Data handling:** secrets are `env:` references resolved at action time. They never enter the
@@ -225,7 +230,9 @@ same.
 **Deliberately left out:** a real co-browsing console (mocked, with a real lease and API);
 desktop and vision surfaces (designed seam only); a broker/queue/multi-process deployment; an
 artifact registry with signatures (JSON files in git instead); automatic overlay generation; a
-second model provider; a screen recording (masked per-step screenshots instead).
+screen recording (masked per-step screenshots instead). `ask`, where a model picks a catalog tool,
+is implemented but not in the evidence: the environment that produced the replay evidence can't
+reach a model API, so the evidence shows `invoke` by tool name instead.
 
 **Stretch goals taken:** an agent-facing capability catalog (`catalog`/`invoke`/`ask`, with a
 real model calling the tool) and cross-tenant reuse with overlays and route canonicalisation. An

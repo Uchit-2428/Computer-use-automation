@@ -1,0 +1,197 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162052-36f7",
+  "capability": "member.get_savings_balance@1.0.0",
+  "tenant": "acme",
+  "status": "succeeded",
+  "outputs": {
+    "primary_savings_balance": "fp:de08df1089"
+  },
+  "recoveries": [],
+  "interventions": [
+    {
+      "id": "iv-84087e",
+      "reason": "SUPERVISOR_OVERRIDE_REQUIRED: Flagged record: a supervisor must enter an override code. Automation must never hold or type supervisor codes.",
+      "kind": "escalation_rule",
+      "step_id": "click_inquire",
+      "operator": "supervisor.kim",
+      "resolution": "resolved",
+      "human_actions": [
+        {
+          "ts": "2026-09-24T20:20:59+00:00",
+          "via": "console",
+          "type": "pointer_click",
+          "x": 525.65625,
+          "y": 147.5
+        },
+        {
+          "ts": "2026-09-24T20:20:59+00:00",
+          "via": "dom",
+          "type": "click",
+          "frame": "work",
+          "role": "textbox",
+          "name": "Supervisor Code",
+          "field": "SUPCD",
+          "secret": false,
+          "element": {
+            "role": "textbox",
+            "name": "Supervisor Code",
+            "tag": "input",
+            "attrs": {
+              "name": "SUPCD",
+              "type": "password"
+            },
+            "table": {
+              "column": null,
+              "col_index": 1,
+              "row_cells": [
+                {
+                  "i": 0,
+                  "text": "Supervisor Code"
+                },
+                {
+                  "i": 1,
+                  "text": ""
+                }
+              ],
+              "prev_label": "Supervisor Code",
+              "is_header_row": false
+            },
+            "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[2]/td[2]/input[1]"
+          }
+        },
+        {
+          "ts": "2026-09-24T20:20:59+00:00",
+          "via": "console",
+          "type": "keyboard_type",
+          "chars": 4
+        },
+        {
+          "ts": "2026-09-24T20:21:00+00:00",
+          "via": "console",
+          "type": "pointer_click",
+          "x": 541.3828125,
+          "y": 176.5
+        },
+        {
+          "ts": "2026-09-24T20:21:00+00:00",
+          "via": "dom",
+          "type": "change",
+          "frame": "work",
+          "role": "textbox",
+          "name": "Supervisor Code",
+          "field": "SUPCD",
+          "secret": true,
+          "value": "[SECRET]",
+          "element": {
+            "role": "textbox",
+            "name": "Supervisor Code",
+            "tag": "input",
+            "attrs": {
+              "name": "SUPCD",
+              "type": "password"
+            },
+            "table": {
+              "column": null,
+              "col_index": 1,
+              "row_cells": [
+                {
+                  "i": 0,
+                  "text": "Supervisor Code"
+                },
+                {
+                  "i": 1,
+                  "text": ""
+                }
+              ],
+              "prev_label": "Supervisor Code",
+              "is_header_row": false
+            },
+            "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[2]/td[2]/input[1]"
+          }
+        },
+        {
+          "ts": "2026-09-24T20:21:00+00:00",
+          "via": "dom",
+          "type": "click",
+          "frame": "work",
+          "role": "button",
+          "name": "Approve Override",
+          "field": null,
+          "secret": false,
+          "element": {
+            "role": "button",
+            "name": "Approve Override",
+            "tag": "input",
+            "attrs": {
+              "type": "submit"
+            },
+            "table": {
+              "column": null,
+              "col_index": 1,
+              "row_cells": [
+                {
+                  "i": 0,
+                  "text": ""
+                },
+                {
+                  "i": 1,
+                  "text": ""
+                }
+              ],
+              "prev_label": "",
+              "is_header_row": false
+            },
+            "xpath": "/html/body[1]/table[1]/tbody[1]/tr[2]/td[1]/form[1]/table[1]/tbody[1]/tr[3]/td[2]/input[1]"
+          }
+        }
+      ],
+      "waited_ms": 3203
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "click_member_inquiry",
+      "index": 0,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 657
+    },
+    {
+      "step_id": "enter_member",
+      "index": 1,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 633
+    },
+    {
+      "step_id": "click_inquire",
+      "index": 2,
+      "status": "human",
+      "duration_ms": 0,
+      "note": "SUPERVISOR_OVERRIDE_REQUIRED"
+    },
+    {
+      "step_id": "click_view",
+      "index": 3,
+      "status": "ok",
+      "strategy": "table_cell",
+      "strategies_agreeing": 2,
+      "duration_ms": 692
+    },
+    {
+      "step_id": "read_primary_savings_balance",
+      "index": 4,
+      "status": "ok",
+      "strategy": "table_cell",
+      "strategies_agreeing": 2,
+      "duration_ms": 595
+    }
+  ],
+  "warnings": [],
+  "started_at": "2026-09-24T20:20:52+00:00",
+  "duration_ms": 10972,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162052-36f7"
+}

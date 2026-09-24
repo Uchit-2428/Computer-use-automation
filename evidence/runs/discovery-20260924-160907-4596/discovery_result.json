@@ -1,0 +1,13 @@
+{
+  "status": "succeeded",
+  "reason": "",
+  "run_id": "discovery-[PAN]",
+  "steps": 5,
+  "capability": "share.open_account_to_review@1.0.0",
+  "usage": {
+    "input_tokens": 18531,
+    "output_tokens": 366,
+    "calls": 6
+  },
+  "model": "gemini-3.6-flash"
+}

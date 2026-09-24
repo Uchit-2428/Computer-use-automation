@@ -1,0 +1,51 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162103-9b37",
+  "capability": "member.get_savings_balance@1.0.0",
+  "tenant": "bayside",
+  "status": "failed",
+  "outputs": {},
+  "error": {
+    "code": "TARGET_NOT_FOUND",
+    "message": "Inquire button: could not uniquely resolve 'Inquire button'",
+    "step_id": "click_inquire",
+    "step_index": 2,
+    "expected": "exactly one match for Inquire button",
+    "observed": "strategy results: [{'strategy': 'role_name', 'count': 0}]; same-role candidates on screen: [\"button 'Search'\"]",
+    "retryable": false,
+    "evidence": [
+      "screens/07-FAIL-target_not_found.png",
+      "failure/target_not_found-dom-_top.html",
+      "failure/target_not_found-dom-banner.html",
+      "failure/target_not_found-dom-nav.html",
+      "failure/target_not_found-dom-work.html",
+      "failure/target_not_found-observation.txt"
+    ]
+  },
+  "recoveries": [],
+  "interventions": [],
+  "steps": [
+    {
+      "step_id": "click_member_inquiry",
+      "index": 0,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 716
+    },
+    {
+      "step_id": "enter_member",
+      "index": 1,
+      "status": "ok",
+      "strategy": "attribute",
+      "strategies_agreeing": 1,
+      "duration_ms": 622
+    }
+  ],
+  "warnings": [
+    "step enter_member: primary strategy 'role_name' failed, resolved via fallback 'attribute' (possible UI drift)"
+  ],
+  "started_at": "2026-09-24T20:21:03+00:00",
+  "duration_ms": 15145,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162103-9b37"
+}

@@ -35,6 +35,7 @@ SCENARIOS: list[dict] = [
     {"name": "tenant-bayside-base-artifact", "why": "Same vendor product, relabelled UI: drift detected and pinpointed", "args": [BAL, "--tenant", "bayside", "--input", "member_id=100234", "--no-overlays"]},
     {"name": "tenant-bayside-with-overlay", "why": "Shared artifact + minimal tenant overlay", "args": [BAL, "--tenant", "bayside", "--input", "member_id=100234"]},
     {"name": "share-review-happy-path", "why": "Second capability: multi-field form to the review screen (never confirms)", "args": [SHARE, "--input", "member_id=100871", "--input", "share_type=VACATION CLUB", "--input", "initial_deposit=50.00"]},
+    {"name": "rejected-irreversible-unconfirmed", "why": "Capability with an irreversible Confirm step, no caller confirmation -> refused before touching the UI", "args": ["evidence/policy/share.open_account_and_confirm.json", "--allow-draft", "--input", "member_id=100871", "--input", "share_type=VACATION CLUB", "--input", "initial_deposit=50.00"]},
     {"name": "share-review-validation", "why": "Host rejects the deposit amount -> business outcome", "args": [SHARE, "--input", "member_id=100871", "--input", "share_type=VACATION CLUB", "--input", "initial_deposit=50.5"]},
 ]
 
@@ -48,7 +49,7 @@ def main() -> None:
         cmd = [sys.executable, "-m", "cua", "replay", *sc["args"]]
         p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
         try:
-            out = json.loads(p.stdout[p.stdout.index("{"):])
+            out = json.loads(p.stdout[p.stdout.index("{\n  \"schema\""):])
         except ValueError:
             print(p.stdout, p.stderr)
             raise

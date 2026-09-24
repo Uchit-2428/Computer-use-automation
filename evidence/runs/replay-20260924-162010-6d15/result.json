@@ -1,0 +1,66 @@
+{
+  "schema": "cua.replay-result/v1",
+  "run_id": "replay-20260924-162010-6d15",
+  "capability": "member.get_savings_balance@1.0.0",
+  "tenant": "acme",
+  "status": "succeeded",
+  "outputs": {
+    "primary_savings_balance": "fp:1a4327f904"
+  },
+  "recoveries": [
+    {
+      "step_id": "sign_on",
+      "code": "SYSTEM_NOTICE",
+      "action": "click",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "interventions": [],
+  "steps": [
+    {
+      "step_id": "click_member_inquiry",
+      "index": 0,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 707
+    },
+    {
+      "step_id": "enter_member",
+      "index": 1,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 2,
+      "duration_ms": 667
+    },
+    {
+      "step_id": "click_inquire",
+      "index": 2,
+      "status": "ok",
+      "strategy": "role_name",
+      "strategies_agreeing": 1,
+      "duration_ms": 676
+    },
+    {
+      "step_id": "click_view",
+      "index": 3,
+      "status": "ok",
+      "strategy": "table_cell",
+      "strategies_agreeing": 2,
+      "duration_ms": 703
+    },
+    {
+      "step_id": "read_primary_savings_balance",
+      "index": 4,
+      "status": "ok",
+      "strategy": "table_cell",
+      "strategies_agreeing": 2,
+      "duration_ms": 615
+    }
+  ],
+  "warnings": [],
+  "started_at": "2026-09-24T20:20:10+00:00",
+  "duration_ms": 7595,
+  "evidence_dir": "/home/claude/cua-automation/evidence/runs/replay-20260924-162010-6d15"
+}
