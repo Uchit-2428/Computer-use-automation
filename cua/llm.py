@@ -62,48 +62,59 @@ def gemini_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
 _RESOLVED_GEMINI: dict[str, str] = {}
 
 
-async def _latest_flash(client: httpx.AsyncClient, key: str) -> str | None:
-    """Pick the newest 'flash' model that supports generateContent (models get retired)."""
+async def _flash_models(client: httpx.AsyncClient, key: str) -> list[str]:
+    """Available 'flash' models that support generateContent, newest first (models get retired)."""
+    import re as _re
+
     r = await client.get(f"{GEMINI_BASE}/v1beta/models", params={"pageSize": 200}, headers={"x-goog-api-key": key})
     if r.status_code != 200:
-        return None
+        return []
     names = [m["name"].split("/", 1)[1] for m in r.json().get("models", [])
              if "generateContent" in m.get("supportedGenerationMethods", []) and "flash" in m["name"]
-             and not any(x in m["name"] for x in ("lite", "image", "tts", "audio", "live", "exp", "preview"))]
+             and not any(x in m["name"] for x in ("image", "tts", "audio", "live", "exp", "embedding"))]
 
-    def ver(n: str) -> tuple:
-        import re as _re
+    def rank(n: str) -> tuple:
+        v = tuple(int(x) for x in _re.findall(r"\d+", n)[:2])
+        return ("lite" not in n, v, "preview" not in n)  # full flash models before lite ones
 
-        return tuple(int(x) for x in _re.findall(r"\d+", n)[:2])
-
-    return max(names, key=ver) if names else None
+    return sorted(set(names), key=rank, reverse=True)
 
 
 async def gemini_generate(client: httpx.AsyncClient, model: str, key: str, body: dict[str, Any]) -> dict[str, Any]:
+    """generateContent with: patient backoff on 429/5xx (free tier), switch to the API-named
+    replacement when a model is retired (404), and fail over to another flash model when one
+    stays overloaded (503 'high demand')."""
     import asyncio
     import re as _re
 
+    requested = model
     model = _RESOLVED_GEMINI.get(model, model)
-    for attempt in range(6):
+    tried: set[str] = set()
+    overloaded = 0
+    for attempt in range(12):
         r = await client.post(f"{GEMINI_BASE}/v1beta/models/{model}:generateContent", json=body,
                               headers={"x-goog-api-key": key, "content-type": "application/json"})
-        if r.status_code == 404 and attempt == 0:
-            # model retired / unavailable: use the replacement the API names, else the newest flash model
-            m = _re.search(r"models/([a-z0-9.\-]+) for", r.text)
-            alt = m.group(1) if m else await _latest_flash(client, key)
-            if alt and alt != model:
-                _RESOLVED_GEMINI[model] = alt
-                model = alt
+        if r.status_code == 200:
+            data = r.json()
+            data.setdefault("modelVersion", model)
+            return data
+        tried.add(model)
+        if r.status_code == 404 or (r.status_code == 503 and overloaded >= 2):
+            m = _re.search(r"models/([a-z0-9.\-]+) for", r.text) if r.status_code == 404 else None
+            alts = [m.group(1)] if m else [n for n in await _flash_models(client, key) if n not in tried]
+            if alts:
+                print(f"[gemini] {model} -> {alts[0]} ({r.status_code})", flush=True)
+                _RESOLVED_GEMINI[requested] = alts[0]  # later calls in this run go straight to it
+                model, overloaded = alts[0], 0
                 continue
-        if r.status_code in (429, 500, 503) and attempt < 5:  # free tier is rate limited: back off
-            await asyncio.sleep(min(60, 5 * (attempt + 1)))
+        if r.status_code in (429, 500, 502, 503, 504):
+            overloaded += r.status_code == 503
+            wait = min(60, 5 * (attempt + 1))
+            print(f"[gemini] {r.status_code} from {model}; retrying in {wait}s", flush=True)
+            await asyncio.sleep(wait)
             continue
-        if r.status_code != 200:
-            raise RuntimeError(f"Gemini API error {r.status_code}: {r.text[:300]}")
-        data = r.json()
-        data.setdefault("modelVersion", model)
-        return data
-    raise RuntimeError("Gemini API: retries exhausted")
+        raise RuntimeError(f"Gemini API error {r.status_code}: {r.text[:300]}")
+    raise RuntimeError("Gemini API: retries exhausted (service overloaded); try again in a few minutes")
 
 
 @dataclass
