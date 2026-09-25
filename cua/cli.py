@@ -40,8 +40,12 @@ def _print(obj: Any) -> None:
 
 
 def set_chaos(tenant: str, chaos: dict[str, Any] | None) -> None:
-    """Test-harness only: configure fault injection in the mock app."""
-    httpx.post(f"{MOCK}/__chaos/{tenant}", json=chaos or {}, timeout=5).raise_for_status()
+    """Test-harness only: configure (or reset) fault injection in the mock app."""
+    try:
+        httpx.post(f"{MOCK}/__chaos/{tenant}", json=chaos or {}, timeout=5).raise_for_status()
+    except httpx.HTTPError:
+        sys.exit(f"The CoreLink mock app is not reachable at {MOCK}. Start it first (in another terminal):\n"
+                 f"    python -m mockapp.server")
 
 
 async def _with_console(enabled: bool, coro_fn):
