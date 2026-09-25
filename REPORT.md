@@ -97,8 +97,8 @@ first"; (2) re-classify risk against the **live** element and gate it; (3) act, 
 filled values (`INPUT_NOT_ACCEPTED` if the app rewrote them); (4) wait for `expect`. That means
 route pattern (canonicalised, e.g. `^{{tenant.base_path}}/work/member/{{inputs.member_id}}`),
 frame title and new headings, all within the step's time budget measured from the action.
-Waiting is event-based: in-flight document requests are tracked and DOM stability is required, so
-there are no sleeps. Final `checkpoint` plus output typing (`"$12,480.55"` → `"12480.55"`,
+Waiting is condition-based: in-flight document requests are tracked and DOM stability is required,
+polling every 250 ms up to the step budget, so there are no fixed sleeps. Final `checkpoint` plus output typing (`"$12,480.55"` → `"12480.55"`,
 pattern-checked) complete the run. The discovery-time value and the replayed value share the same
 HMAC fingerprint in evidence, which shows determinism without persisting the balance.
 
@@ -234,8 +234,8 @@ screen recording (masked per-step screenshots instead). `ask`, where a model pic
 is implemented but not in the evidence: the environment that produced the replay evidence can't
 reach a model API, so the evidence shows `invoke` by tool name instead.
 
-**Stretch goals taken:** an agent-facing capability catalog (`catalog`/`invoke`/`ask`, with a
-real model calling the tool) and cross-tenant reuse with overlays and route canonicalisation. An
+**Stretch goals taken:** an agent-facing capability catalog (`catalog`/`invoke`, plus `ask` for a
+model-driven tool call) and cross-tenant reuse with overlays and route canonicalisation. An
 approval gate (`draft → approved`) is part of the core.
 
 **Next, in order:**
